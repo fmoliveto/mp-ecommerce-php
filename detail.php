@@ -1,3 +1,58 @@
+<?
+	// SDK de Mercado Pago
+	require_once 'vendor/autoload.php';
+
+	$id_pedido = 'ABCD1234';
+	$id_producto = '1234';
+	$description = 'Dispositivo móvil de Tienda e-commerce';
+	$image = $_REQUEST['img'];
+	$title = $_REQUEST['title'];
+	$price = $_REQUEST['price'];
+	$unit = $_REQUEST['unit'];
+	
+	// Credenciales
+	MercadoPago\SDK::setAccessToken('APP_USR-6317427424180639-090914-5c508e1b02a34fcce879a999574cf5c9-469485398');
+	//MercadoPago\SDK::setIntegratorId('INTEGRATOR_ID');
+  
+	// Datos del item
+	$item = new MercadoPago\Item();
+	$item->id = $id_producto;
+	$item->title = $title;
+	$item->description = $description;
+	$item->picture_url = $image;
+	$item->quantity = $unit;
+	$item->currency_id = 'ARS';
+	$item->unit_price = $price;
+
+	// Datos del pagador
+	$payer = new MercadoPago\Payer();
+	$payer->name = 'Lalo';
+	$payer->surname = 'Landa';
+	$payer->email = 'test_user_97555375@testuser.com';
+	$payer->phone = array('area_code' => '11', 'number' => '2222-3333');
+	$payer->identification = array('type' => 'DNI', 'number' => '22.333.444');	
+	$payer->address = array('street_name' => 'Falsa', 'street_number' => 123, 'zip_code' => '1111');
+	
+	// Datos de la preferencia
+	$preference = new MercadoPago\Preference();
+	$preference->back_urls = array(
+		"success" => "https://fmoliveto-mp-commerce-php.herokuapp.com/pago-exitoso.php",
+		"failure" => "https://fmoliveto-mp-commerce-php.herokuapp.com/pago-cancelado.php",
+		"pending" => "https://fmoliveto-mp-commerce-php.herokuapp.com/pago-pendiente.php"
+	);
+	$preference->auto_return = "approved";	
+	$preference->payment_methods = array(
+		"excluded_payment_methods" => array(array("id" => "amex")),
+		"excluded_payment_types" => array(array("id" => "atm")),
+		"installments" => 6
+	);
+	$preference->notification_url = "https://fmoliveto-mp-commerce-php.herokuapp.com/pago-notificacion.php";	
+	$preference->external_reference = $id_pedido;
+	$preference->payer = $payer;	
+	$preference->items = array($item);
+	$preference->save();
+?>	
+
 <!DOCTYPE html>
 <html class="supports-animation supports-columns svg no-touch no-ie no-oldie no-ios supports-backdrop-filter as-mouseuser" lang="en-US"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     
@@ -123,14 +178,19 @@
 
                                             </h3>
                                         </div>
-                                        <h3 >
-                                            <?php echo $_POST['price'] ?>
+                                        <h3>
+                                            Precio: <?php echo "$" . $_POST['price'] ?>
                                         </h3>
-                                        <h3 >
-                                            <?php echo "$" . $_POST['unit'] ?>
+                                        <h3>
+                                            Cantidad: <?php echo $_POST['unit'] ?>
                                         </h3>
                                     </div>
-                                    <button type="submit" class="mercadopago-button" formmethod="post">Pagar</button>
+                                    <!--button type="submit" class="mercadopago-button" formmethod="post">Pagar</button-->
+									<form action="/pago-exitoso" method="POST">
+										<script src="https://www.mercadopago.com.mx/integrations/v1/web-payment-checkout.js" 
+										data-preference-id="<?php echo $preference->id; ?>">
+										</script>
+									</form>
                                 </div>
                             </div>
                         </div>
