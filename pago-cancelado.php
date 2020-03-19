@@ -1,67 +1,6 @@
-<?
-	session_start();
-
-	// SDK de Mercado Pago
-	require 'vendor/autoload.php';
-
-	$id_pedido = 'ABCD1234';
-	$id_producto = '1234';
-	$description = 'Dispositivo móvil de Tienda e-commerce';
-	$image = $_REQUEST['img'];
-	$title = $_REQUEST['title'];
-	$price = $_REQUEST['price'];
-	$unit = $_REQUEST['unit'];
-	
-	// Credenciales
-	MercadoPago\SDK::setAccessToken('APP_USR-6317427424180639-090914-5c508e1b02a34fcce879a999574cf5c9-469485398');
-	//MercadoPago\SDK::setIntegratorId('INTEGRATOR_ID');
-  
-	// Datos del item
-	$item = new MercadoPago\Item();
-	$item->id = $id_producto;
-	$item->title = $title;
-	$item->description = $description;
-	$item->picture_url = $image;
-	$item->quantity = $unit;
-	$item->currency_id = 'ARS';
-	$item->unit_price = $price;
-
-	// Datos del pagador
-	$payer = new MercadoPago\Payer();
-	$payer->name = 'Lalo';
-	$payer->surname = 'Landa';
-	$payer->email = 'test_user_63274575@testuser.com';
-	$payer->phone = array('area_code' => '11', 'number' => '2222-3333');
-	$payer->identification = array('type' => 'DNI', 'number' => '22333444');	
-	$payer->address = array('street_name' => 'Falsa', 'street_number' => 123, 'zip_code' => '1111');
-	
-	// Datos de la preferencia
-	$preference = new MercadoPago\Preference();
-	$preference->back_urls = array(
-		"success" => "https://fmoliveto-mp-commerce-php.herokuapp.com/pago-exitoso.php",
-		"failure" => "https://fmoliveto-mp-commerce-php.herokuapp.com/pago-cancelado.php",
-		"pending" => "https://fmoliveto-mp-commerce-php.herokuapp.com/pago-pendiente.php"
-	);
-	$preference->auto_return = "approved";
-	$preference->payment_methods = array(
-		"excluded_payment_methods" => array(array("id" => "amex")),
-		"excluded_payment_types" => array(array("id" => "atm")),
-		"installments" => 6
-	);
-	$preference->notification_url = "https://fmoliveto-mp-commerce-php.herokuapp.com/pago-notificacion.php";	
-	$preference->external_reference = $id_pedido;
-	$preference->payer = $payer;	
-	$preference->items = array($item);
-	$preference->save();
-	
-	// Datos de sesion
-	$_SESSION['unit_price'] = $price;
-	
-?>	
-
 <!DOCTYPE html>
 <html class="supports-animation supports-columns svg no-touch no-ie no-oldie no-ios supports-backdrop-filter as-mouseuser" lang="en-US"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    
+
     <meta name="viewport" content="width=1024">
     <title>Tienda e-commerce</title>
 
@@ -105,7 +44,7 @@
 <body class="as-theme-light-heroimage">
 
     <div class="stack">
-        
+
         <div class="as-search-wrapper" role="main">
             <div class="as-navtuck-wrapper">
                 <div class="as-l-fullwidth  as-navtuck" data-events="event52">
@@ -135,58 +74,26 @@
                         <div class="as-searchnav-placeholder" style="height: 77px;">
                             <div class="row as-search-navbar" id="as-search-navbar" style="width: auto;">
                                 <div class="as-accessories-filter-tile column large-6 small-3">
-
                                     <button class="as-filter-button" aria-expanded="true" aria-controls="as-search-filters" type="button">
-                                        <h2 class=" as-filter-button-text">
-                                            Smartphones
+                                        <h2 class="as-filter-button-text">
+                                            Estado de su pago
                                         </h2>
                                     </button>
-
-
                                 </div>
-
                             </div>
                         </div>
                         <div class="as-accessories-results  as-search-desktop">
                             <div class="width:60%">
-                                <div class="as-producttile-tilehero with-paddlenav " style="float:left;">
-                                    <div class="as-dummy-container as-dummy-img">
-
-                                        <img src="./assets/wireless-headphones" class="ir ir item-image as-producttile-image  " style="max-width: 70%;max-height: 70%;"alt="" width="445" height="445">
-                                    </div>
-                                    <div class="images mini-gallery gal5 ">                                   
-                                        <div class="as-isdesktop with-paddlenav with-paddlenav-onhover">
-                                            <div class="clearfix image-list xs-no-js as-util-relatedlink relatedlink" data-relatedlink="6|Powerbeats3 Wireless Earphones - Neighborhood Collection - Brick Red|MPXP2">
-                                                <div class="as-tilegallery-element as-image-selected">
-                                                    <div class=""></div>
-                                                    <img src="./assets/003.jpg" class="ir ir item-image as-producttile-image" alt="" width="445" height="445" style="content:-webkit-image-set(url(<?php echo $_POST['img'] ?>) 2x);">
-                                                </div>
-                                                
-                                            </div>                                            
-                                        </div>
-                                    </div>
-                                </div>
                                 <div class="as-producttile-info" style="float:left;min-height: 168px;">
                                     <div class="as-producttile-titlepricewraper" style="min-height: 128px;">
-                                        <div class="as-producttile-title">
-                                            <h3 class="as-producttile-name">
-												<span data-ase-truncate="2"><?php echo $_POST['title'] ?></span>
-                                            </h3>
-                                        </div>
-										<br>
-										<p class="as-producttile-tilelink">
-											<span data-ase-truncate="2">Precio: <?php echo "$" . $_POST['price'] ?></span>
-										</p>
-                                        <p class="as-producttile-tilelink">
-                                            Cantidad: <?php echo $_POST['unit'] ?>
-                                        </p>
+                                        <br><br>
+                                        <h3>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;El pago ha sido rechazado
+                                        </h3>
+                                        <form action="/index.php" method="get">
+                                            &nbsp;&nbsp;&nbsp;&nbsp;<button type="submit" class="mercadopago-button" formmethod="post">Volver</button>
+                                        </form>
                                     </div>
-									<br>                                    
-									<form action="/pago-exitoso.php" method="POST">
-										<script src="https://www.mercadopago.com.ar/integrations/v1/web-payment-checkout.js" 
-										data-preference-id="<?php echo $preference->id; ?>" data-elements-color="#2D3277" data-button-label="Pagar la compra">
-										</script>
-									</form>
                                 </div>
                             </div>
                         </div>
