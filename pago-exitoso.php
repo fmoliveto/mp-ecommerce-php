@@ -16,7 +16,11 @@
 	if ($estado_detalle == 'pending_waiting_payment')
 		$estado_detalle = 'esperando el pago';		
 
-	$metodo_pago = $_REQUEST['payment_type'];
+	$back_url = $_REQUEST['back_url'];
+	$params = explode('&', $back_url);
+	$param_payment_type = explode('=', $params[3]);
+	
+	$metodo_pago = $param_payment_type[1];
 	if ($metodo_pago == 'credit_card')
 		$metodo_pago = 'tarjeta de crédito';
 	if ($metodo_pago == 'ticket')
