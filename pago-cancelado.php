@@ -1,6 +1,37 @@
+<?
+	session_start();
+	
+	//Datos del pago
+	$estado = $_REQUEST['payment_status'];
+	if ($estado == 'approved')
+		$estado = 'aprobado';	
+	if ($estado == 'pending')
+		$estado = 'pendiente';
+	if ($estado == 'rejected')
+		$estado = 'rechazado';
+	
+	$estado_detalle = $_REQUEST['payment_status_detail'];
+	if ($estado_detalle == 'accredited')
+		$estado_detalle = 'acreditado';	
+	if ($estado_detalle == 'pending_waiting_payment')
+		$estado_detalle = 'esperando el pago';		
+
+	$metodo_pago = $_REQUEST['payment_type'];
+	if ($metodo_pago == 'credit_card')
+		$metodo_pago = 'tarjeta de crédito';
+	if ($metodo_pago == 'ticket')
+		$metodo_pago = 'ticket';
+
+	$id_preferencia = $_REQUEST['preference_id'];	
+	$id_pago = $_REQUEST['payment_id'];
+	$id_compra = $_REQUEST['merchant_order_id'];
+	$nro_orden_pedido = $_REQUEST['external_reference'];
+	$monto = $_SESSION['unit_price'];
+?>
+
 <!DOCTYPE html>
 <html class="supports-animation supports-columns svg no-touch no-ie no-oldie no-ios supports-backdrop-filter as-mouseuser" lang="en-US"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
+    
     <meta name="viewport" content="width=1024">
     <title>Tienda e-commerce</title>
 
@@ -44,7 +75,7 @@
 <body class="as-theme-light-heroimage">
 
     <div class="stack">
-
+        
         <div class="as-search-wrapper" role="main">
             <div class="as-navtuck-wrapper">
                 <div class="as-l-fullwidth  as-navtuck" data-events="event52">
@@ -75,7 +106,7 @@
                             <div class="row as-search-navbar" id="as-search-navbar" style="width: auto;">
                                 <div class="as-accessories-filter-tile column large-6 small-3">
                                     <button class="as-filter-button" aria-expanded="true" aria-controls="as-search-filters" type="button">
-                                        <h2 class="as-filter-button-text">
+                                        <h2 class=" as-filter-button-text">
                                             Estado de su pago
                                         </h2>
                                     </button>
@@ -86,12 +117,17 @@
                             <div class="width:60%">
                                 <div class="as-producttile-info" style="float:left;min-height: 168px;">
                                     <div class="as-producttile-titlepricewraper" style="min-height: 128px;">
-                                        <br><br>
+                                        <br>
                                         <h3>
-                                            &nbsp;&nbsp;&nbsp;&nbsp;El pago ha sido rechazado
+                                            &nbsp;&nbsp;&nbsp;&nbsp;El pago ha sido <?= $estado ?>.<br><br>
+											&nbsp;&nbsp;&nbsp;&nbsp;Método de pago utilizado: <?= $metodo_pago ?>.<br>
+											&nbsp;&nbsp;&nbsp;&nbsp;Monto pagado: $<?= $monto ?>.<br>
+											&nbsp;&nbsp;&nbsp;&nbsp;Número de orden de pedido: <?= $nro_orden_pedido ?>.<br>
+											&nbsp;&nbsp;&nbsp;&nbsp;Id de pago de Mercado Pago: <?= $id_pago ?>.
                                         </h3>
                                         <form action="/index.php" method="get">
                                             &nbsp;&nbsp;&nbsp;&nbsp;<button type="submit" class="mercadopago-button" formmethod="post">Volver</button>
+											<br><br>
                                         </form>
                                     </div>
                                 </div>

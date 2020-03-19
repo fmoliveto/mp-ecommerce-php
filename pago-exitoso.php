@@ -2,26 +2,31 @@
 	session_start();
 	
 	//Datos del pago
-	$preference_id = $_REQUEST['preference_id'];
 	$estado = $_REQUEST['payment_status'];
 	if ($estado == 'approved')
 		$estado = 'aprobado';	
 	if ($estado == 'pending')
 		$estado = 'pendiente';
-	if ($estado == 'failure')
+	if ($estado == 'rejected')
 		$estado = 'rechazado';
+	
 	$estado_detalle = $_REQUEST['payment_status_detail'];
 	if ($estado_detalle == 'accredited')
 		$estado_detalle = 'acreditado';	
-	$id_pago = $_REQUEST['payment_id'];
-	$id_compra = $_REQUEST['merchant_order_id'];
-	$nro_orden_pedido = $_REQUEST['external_reference'];
-	$monto = $_SESSION['unit_price'];
+	if ($estado_detalle == 'pending_waiting_payment')
+		$estado_detalle = 'esperando el pago';		
+
 	$metodo_pago = $_REQUEST['payment_type'];
 	if ($metodo_pago == 'credit_card')
 		$metodo_pago = 'tarjeta de crédito';
 	if ($metodo_pago == 'ticket')
-		$metodo_pago = 'ticket';	
+		$metodo_pago = 'ticket';
+
+	$id_preferencia = $_REQUEST['preference_id'];	
+	$id_pago = $_REQUEST['payment_id'];
+	$id_compra = $_REQUEST['merchant_order_id'];
+	$nro_orden_pedido = $_REQUEST['external_reference'];
+	$monto = $_SESSION['unit_price'];
 ?>
 
 <!DOCTYPE html>
@@ -116,7 +121,7 @@
                                         <h3>
                                             &nbsp;&nbsp;&nbsp;&nbsp;El pago ha sido <?= $estado ?>.<br><br>
 											&nbsp;&nbsp;&nbsp;&nbsp;Método de pago utilizado: <?= $metodo_pago ?>.<br>
-											&nbsp;&nbsp;&nbsp;&nbsp;Monto pagado: <?= $monto ?>.<br>
+											&nbsp;&nbsp;&nbsp;&nbsp;Monto pagado: $<?= $monto ?>.<br>
 											&nbsp;&nbsp;&nbsp;&nbsp;Número de orden de pedido: <?= $nro_orden_pedido ?>.<br>
 											&nbsp;&nbsp;&nbsp;&nbsp;Id de pago de Mercado Pago: <?= $id_pago ?>.
                                         </h3>
